@@ -48,7 +48,7 @@ const NewHiresTable = ({hires,refreshHires})=>{
                                         <Link  to={`/update-new-hire/${newHire._id}`}>
                                             <FaEdit />
                                         </Link>
-                                        <Link to={`/view-new-hire/${newHire._id}`}>
+                                        <Link to="/user"  state= {{user: newHire, assignedTasks: newHire.assignedTasks, disabled: true}}>
                                             <FaEye />
                                         </Link>
                                         </div> 
