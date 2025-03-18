@@ -25,12 +25,12 @@ const AddNewHire = () => {
         await axios.post('http://localhost:8000/api/create/newhire', newHire)
         .then((response)=>{
             toast.success(response.data.msg, {position:'top-right'})
-            navigate('/')
+            navigate('/admin')
         }).catch(error => console.log(error));
     }
     return(
         <div className = 'addNewHire'>
-            <Link to = '/'>Back</Link>
+            <Link to = '/admin'>Back</Link>
             <h3>Add New Hire</h3>
             <form className = 'addNewHireForm' onSubmit={submitForm}>
                 <div className="inputGroup">

@@ -1,26 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import './newHiresTable.css';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const NewHiresTable = ()=>{
-    const [newHires, setNewHires] = useState([]);
-
-     //use effect hook to get all data
-     useEffect(()=>{
-        const fetchData = async()=>{
-            const response = await axios.get("http://localhost:8000/api/getall/newhires");
-            setNewHires(response.data)
-        }
-        fetchData();
-    }, [])
+const NewHiresTable = ({hires,refreshHires})=>{
 
     const deleteNewHire = async (newHireId) =>{
         await axios.delete(`http://localhost:8000/api/delete/${newHireId}`)
         .then((response)=>{
-            setNewHires((prevData)=>prevData.filter((user)=>user._id!==newHireId))
-            toast.success(response.data.msg, {position:'top-right'})
+            toast.success(response.data.msg, {position:'top-right'});
+            refreshHires();
         })
         .catch((error)=>{
             console.log(error);
@@ -42,7 +32,7 @@ const NewHiresTable = ()=>{
                 </thead>
                 <tbody>
                     {
-                        newHires.map((newHire,index)=>{
+                        hires.map((newHire,index)=>{
                             return(
                                 <tr key = {newHire._id}>
                                     <td> {index+1} </td>

@@ -39,13 +39,13 @@ const EditNewHire = () => {
         await axios.put(`http://localhost:8000/api/update/${id}`, newHire)
         .then((response)=>{
             toast.success(response.data.msg, {position: 'top-right'})
-            navigate('/');
+            navigate('/admin');
         }).catch(error=>console.log(error))
     }
 
     return(
         <div className = 'addNewHire'>
-            <Link to = '/'>Back</Link>
+            <Link to = '/admin'>Back</Link>
             <h3>Update New Hire</h3>
             <form className = 'addNewHireForm' onSubmit={submitForm}>
                 <div className="inputGroup">

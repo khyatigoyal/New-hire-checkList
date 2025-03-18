@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug Server",
+        "program": "${workspaceFolder}/server/index.js",
+        "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+        "restart": true,
+        "console": "integratedTerminal",
+        "env": {
+        "MONGOURL": "mongodb+srv://twwg:321321@cluster0.qf9ax.mongodb.net/newHireChecklist?retryWrites=true&w=majority&appName=Cluster0",
+        "PORT": "8000",
+        "NODE_ENV": "development"
+      }
+      }
+    ]
+  }

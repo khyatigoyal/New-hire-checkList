@@ -1,56 +1,47 @@
 import NewHire from "../models/newHireModel.js"
-import Tasklist from "../models/taskListModel.js";
+import Task from "../models/taskListModel.js";
 
 // Create a constant tasklist that all new hires will get
-const constantTasklist = {
-    title: 'Onboarding Tasks',
-    tasks: [
+const constantTaskList = [
       {
-        description: 'Complete HR documentation',
-        dueDate: new Date('2025-03-20'),
-        status: 'Pending',
+        title:'HR documentation',
+        description: 'Complete Code of Conduct',
       },
       {
+        title:'Work Portal',
         description: 'Setup work email and tools',
-        dueDate: new Date('2025-03-21'),
-        status: 'Pending',
       },
       {
+        title:'Functional Onboarding',
         description: 'Attend orientation session',
-        dueDate: new Date('2025-03-22'),
-        status: 'Pending',
       },
-    ],
-  };
+    ]
 
 
 // Create a new hire and assign the constant tasklist
 export const create = async (req, res) => {
     try {
       const { firstName, lastName, email, startDate } = req.body;
-  
+      let tasks = await Task.find(); // Fetch all tasks from master data
+      if (tasks===null || tasks===undefined || tasks.length===0) {
+        tasks = await Task.insertMany(constantTaskList);
+      }
+      const assignedTasks = tasks.map((task) => ({
+        task: task._id,
+        dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days later
+        status: "Pending",
+      }));
       // Step 1: Save the new hire
       const newHire = new NewHire({
         firstName,
         lastName,
         email,
         startDate,
+        assignedTasks: assignedTasks
       });
-      const savedHire = await newHire.save();
+      await newHire.save();
   
-      // Step 2: Create or fetch the constant tasklist
-      let tasklist = await Tasklist.findOne({ title: constantTasklist.title });
-  
-      if (!tasklist) {
-        tasklist = new Tasklist(constantTasklist);
-        await tasklist.save();
-      }
-  
-      // Step 3: Assign the tasklist to the new hire
-      savedHire.assignedTasks.push(tasklist._id);
-      await savedHire.save();
-  
-      res.status(201).json({ newHire: savedHire, tasklist, msg:"New Hire created successfully" });
+      res.status(200).json({ newHire: newHire, msg:"New Hire created successfully" });
     } catch (error) {
       res.status(400).json({ error: 'Error creating new hire and assigning tasklist' });
     }
@@ -59,7 +50,7 @@ export const create = async (req, res) => {
   // Get all new hires along with their assigned tasks
   export const getAll = async (req, res) => {
     try {
-      const hires = await NewHire.find().populate('assignedTasks');
+      const hires = await NewHire.find({role:"user"}).populate('assignedTasks');
       res.status(200).json(hires);
     } catch (error) {
       res.status(500).json({ error: 'Error fetching new hires' });
