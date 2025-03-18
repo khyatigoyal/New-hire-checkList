@@ -25,12 +25,12 @@ const AddNewHire = () => {
         await axios.post('http://localhost:8000/api/create/newhire', newHire)
         .then((response)=>{
             toast.success(response.data.msg, {position:'top-right'})
-            navigate('/')
+            navigate('/admin')
         }).catch(error => console.log(error));
     }
     return(
         <div className = 'addNewHire'>
-            <Link to = '/'>Back</Link>
+            <Link to = '/admin'>Back</Link>
             <h3>Add New Hire</h3>
             <form className = 'addNewHireForm' onSubmit={submitForm}>
                 <div className="inputGroup">
@@ -43,11 +43,11 @@ const AddNewHire = () => {
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='email'> Email </label>
-                    <input type = 'text' onChange = {inputHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
+                    <input type = 'email' onChange = {inputHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='startDate'> Start Date </label>
-                    <input type = 'text' onChange = {inputHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
+                    <input type = 'date' onChange = {inputHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
                 </div>
                 <div className="inputGroup">
                     <button type = 'submit'>ADD NEW HIRE</button>

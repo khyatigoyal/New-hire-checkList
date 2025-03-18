@@ -39,13 +39,13 @@ const EditNewHire = () => {
         await axios.put(`http://localhost:8000/api/update/${id}`, newHire)
         .then((response)=>{
             toast.success(response.data.msg, {position: 'top-right'})
-            navigate('/');
+            navigate('/admin');
         }).catch(error=>console.log(error))
     }
 
     return(
         <div className = 'addNewHire'>
-            <Link to = '/'>Back</Link>
+            <Link to = '/admin'>Back</Link>
             <h3>Update New Hire</h3>
             <form className = 'addNewHireForm' onSubmit={submitForm}>
                 <div className="inputGroup">
@@ -58,11 +58,11 @@ const EditNewHire = () => {
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='email'> Email </label>
-                    <input type = 'text' value = {newHire.email} onChange = {inputChangeHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
+                    <input type = 'email' value = {newHire.email} onChange = {inputChangeHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='startDate'> Start Date </label>
-                    <input type = 'text' value = {newHire.startDate} onChange = {inputChangeHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
+                    <input type = 'date' value={newHire.startDate ? new Date(newHire.startDate).toISOString().split('T')[0] : ''} onChange = {inputChangeHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
                 </div>
                 <div className="inputGroup">
                     <button type = 'submit'>UPDATE NEW HIRE</button>
