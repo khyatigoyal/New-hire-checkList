@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate,useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate,useLocation,Link } from "react-router-dom";
 import {  Tooltip, RadialBarChart, RadialBar, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
 import axios from 'axios';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -39,7 +39,7 @@ const Login = ({ setRole }) => {
       if (response.ok) {
         setRole(data.role);
         sessionStorage.setItem("user", JSON.stringify(data));
-        navigate(data.role === "admin" ? "/admin" : "/user",{ state: {user: data, assignedTasks: data.assignedTasks}}); // Redirect based on role
+        navigate(data.role === "admin" ? "/admin" : "/user",{ state: {user: data, assignedTasks: data.assignedTasks, disabled: false}}); // Redirect based on role
       } else {
         setError(data.message || "Invalid credentials");
       }
@@ -77,7 +77,7 @@ const Login = ({ setRole }) => {
 
 const UserDashboard = () => {
   const location = useLocation();
-  const { assignedTasks, user } = location.state || {}; // Handle undefined state
+  const { assignedTasks, user, disabled } = location.state || {}; // Handle undefined state
   const [tasks, setTasks] = useState(assignedTasks);
   const [completionPercentage,setCompletionPercentage]=useState(0);
   useEffect(()=>{
@@ -141,6 +141,7 @@ const taskCompletionData = [
 
       {/* Task Table */}
       <div className="table-responsive">
+      {disabled && <Link to = '/admin'>Back</Link>}
         <table className="table table-bordered">
           <thead className="table-dark">
             <tr>
@@ -151,7 +152,7 @@ const taskCompletionData = [
             </tr>
           </thead>
           <tbody>
-            {tasks.map(task => (
+            {tasks && tasks.map(task => (
               <tr key={task._id}>
                 <td>{task.task.title}</td>
                 <td>{task.task.description}</td>
@@ -170,6 +171,7 @@ const taskCompletionData = [
                         className="form-check-input"
                         type="checkbox"
                         role="switch"
+                        disabled={disabled}
                         checked={task.status === "Completed"}
                         onChange={() => toggleStatus(task._id)}
                         style={{ backgroundColor: task.status === "Completed" ? "#4caf50" : "#ccc", borderColor: task.status === "Completed" ? "#4caf50" : "#ccc" }}
@@ -242,7 +244,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login setRole={setRole} />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/user" element={role === "user" ? <UserDashboard /> : <Navigate to="/" />} />
+        <Route path="/user" element={<UserDashboard />} />
         <Route path="/admin" element={role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
         <Route path="/add-new-hire" element={<AddNewHire />} />
         <Route path="/update-new-hire/:id" element={<EditNewHire />} />

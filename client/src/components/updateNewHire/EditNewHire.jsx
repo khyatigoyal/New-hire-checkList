@@ -20,7 +20,6 @@ const EditNewHire = () => {
     const inputChangeHandler = (e) => { 
         const {name, value} = e.target;
         setNewHire({...newHire, [name]:value});
-        console.log(newHire);
     }
      
     useEffect(()=>{
