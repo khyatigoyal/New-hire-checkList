@@ -58,11 +58,11 @@ const EditNewHire = () => {
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='email'> Email </label>
-                    <input type = 'text' value = {newHire.email} onChange = {inputChangeHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
+                    <input type = 'email' value = {newHire.email} onChange = {inputChangeHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='startDate'> Start Date </label>
-                    <input type = 'text' value = {newHire.startDate} onChange = {inputChangeHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
+                    <input type = 'date' value={newHire.startDate ? new Date(newHire.startDate).toISOString().split('T')[0] : ''} onChange = {inputChangeHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
                 </div>
                 <div className="inputGroup">
                     <button type = 'submit'>UPDATE NEW HIRE</button>

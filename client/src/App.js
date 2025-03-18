@@ -8,6 +8,7 @@ import AddNewHire from './components/addNewHire/AddNewHire';
 import EditNewHire from './components/updateNewHire/EditNewHire';
 import ResetPassword from './components/resetPassword/ResetPassword';
 import toast from 'react-hot-toast';
+import { FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 
 const Navbar = () => (
   <nav className="navbar navbar-dark bg-primary p-3 d-flex justify-content-between">
@@ -21,6 +22,9 @@ const Login = ({ setRole }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate(); // Add this
+  useEffect(()=>{
+    sessionStorage.clear();
+}, []);
   const handleLogin = async () => {
     setError("");
     
@@ -47,7 +51,7 @@ const Login = ({ setRole }) => {
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center vh-100">
-      <div className="card p-4 w-25 text-center">
+      <div className="card p-4 w-25">
         <h2 className="mb-4">Login</h2>
         {error && <div className="alert alert-danger">{error}</div>}
         <input
@@ -151,11 +155,34 @@ const taskCompletionData = [
               <tr key={task._id}>
                 <td>{task.task.title}</td>
                 <td>{task.task.description}</td>
-                <td>{new Date(task.dueDate).toLocaleDateString()}</td>
+                <td>{new Date(task.dueDate).toISOString().split('T')[0]}</td>
                 <td>
-                  <button className={`btn btn-${task.status === "Completed" ? "success" : "warning"}`} onClick={() => toggleStatus(task._id)}>
+                  {/* <button className={`btn btn-${task.status === "Completed" ? "success" : "warning"}`} onClick={() => toggleStatus(task._id)}>
                     {task.status}
-                  </button>
+                  </button> */}
+                  <div className="d-flex align-items-center">
+                    
+                    <div
+                      className="form-check form-switch"
+                      style={{ width: "50px", display: "inline-block" }}
+                    >
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        checked={task.status === "Completed"}
+                        onChange={() => toggleStatus(task._id)}
+                        style={{ backgroundColor: task.status === "Completed" ? "#4caf50" : "#ccc", borderColor: task.status === "Completed" ? "#4caf50" : "#ccc" }}
+                      />
+                    </div>
+                    <span className="ms-2">
+                      {task.status === "Completed" ? (
+                        <FaCheckCircle color="red" />
+                      ) : (
+                        <FaExclamationTriangle color="grey" />
+                      )}
+                    </span>
+                  </div>
                 </td>
               </tr>
             ))}

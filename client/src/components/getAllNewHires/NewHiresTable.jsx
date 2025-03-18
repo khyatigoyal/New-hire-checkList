@@ -3,6 +3,7 @@ import './newHiresTable.css';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { FaTrash, FaEdit, FaEye } from "react-icons/fa";
 
 const NewHiresTable = ({hires,refreshHires})=>{
 
@@ -38,10 +39,19 @@ const NewHiresTable = ({hires,refreshHires})=>{
                                     <td> {index+1} </td>
                                     <td> {newHire.firstName} {newHire.lastName} </td>
                                     <td> {newHire.email} </td>
-                                    <td> {newHire.startDate} </td>
-                                    <td className = 'actionButtons'> 
-                                        <button onClick={()=>deleteNewHire(newHire._id)}><i className="fa-solid fa-trash"></i></button>
-                                        <Link to ={`/update-new-hire/`+newHire._id}><i className="fa-solid fa-pen-to-square"></i></Link>
+                                    <td> {new Date(newHire.startDate).toISOString().split('T')[0]} </td>
+                                    <td className = 'actionButtons'>
+                                        <div className='d-flex'>
+                                        <button className='mx-2' onClick={() => deleteNewHire(newHire._id)}>
+                                            <FaTrash />
+                                        </button>
+                                        <Link  to={`/update-new-hire/${newHire._id}`}>
+                                            <FaEdit />
+                                        </Link>
+                                        <Link to={`/view-new-hire/${newHire._id}`}>
+                                            <FaEye />
+                                        </Link>
+                                        </div> 
                                     </td>
                                  </tr>
                             )

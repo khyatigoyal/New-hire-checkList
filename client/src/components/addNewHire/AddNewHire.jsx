@@ -43,11 +43,11 @@ const AddNewHire = () => {
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='email'> Email </label>
-                    <input type = 'text' onChange = {inputHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
+                    <input type = 'email' onChange = {inputHandler} id = 'email' name = 'email' autoComplete='off' placeholder='Email'></input>
                 </div>
                 <div className="inputGroup">
                     <label htmlFor='startDate'> Start Date </label>
-                    <input type = 'text' onChange = {inputHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
+                    <input type = 'date' onChange = {inputHandler} id = 'startDate' name = 'startDate' autoComplete='off' placeholder='Start Date'></input>
                 </div>
                 <div className="inputGroup">
                     <button type = 'submit'>ADD NEW HIRE</button>

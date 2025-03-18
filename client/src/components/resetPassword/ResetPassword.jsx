@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {useNavigate} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import toast from 'react-hot-toast';
@@ -70,7 +70,9 @@ const ResetPassword = () => {
   
     return (
       <div className="d-flex flex-column align-items-center justify-content-center vh-100">
-        <div className="card p-4 w-25 text-center">
+        
+        <div className="card p-4 w-25">
+        <Link to = '/'>Back</Link>
           <h2 className="mb-4">Reset Password</h2>
           {error && <div className="alert alert-danger">{error}</div>}
           {message && <div className="alert alert-success">{message}</div>}
