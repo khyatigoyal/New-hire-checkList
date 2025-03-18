@@ -1,17 +1,13 @@
 import React, { useState,useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Legend } from "recharts";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate,useLocation } from "react-router-dom";
+import {  Tooltip, RadialBarChart, RadialBar, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
 import axios from 'axios';
 import "bootstrap/dist/css/bootstrap.min.css";
 import NewHiresTable from './components/getAllNewHires/NewHiresTable';
 import AddNewHire from './components/addNewHire/AddNewHire';
 import EditNewHire from './components/updateNewHire/EditNewHire';
 import ResetPassword from './components/resetPassword/ResetPassword';
-const tasks = [
-  { name: "Completed", value: 6, color: "#4caf50" },
-  { name: "Pending", value: 3, color: "#ff9800" },
-  { name: "Optional", value: 1, color: "#2196f3" },
-];
+import toast from 'react-hot-toast';
 
 const Navbar = () => (
   <nav className="navbar navbar-dark bg-primary p-3 d-flex justify-content-between">
@@ -39,7 +35,7 @@ const Login = ({ setRole }) => {
       if (response.ok) {
         setRole(data.role);
         sessionStorage.setItem("user", JSON.stringify(data));
-        navigate(data.role === "admin" ? "/admin" : "/user"); // Redirect based on role
+        navigate(data.role === "admin" ? "/admin" : "/user",{ state: {user: data, assignedTasks: data.assignedTasks}}); // Redirect based on role
       } else {
         setError(data.message || "Invalid credentials");
       }
@@ -75,21 +71,100 @@ const Login = ({ setRole }) => {
   );
 };
 
-const UserDashboard = () => (
-  <div className="mt-4">
-    <h2 className="mb-4">Task Progress</h2>
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie data={tasks} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
-          {tasks.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
-    </ResponsiveContainer>
-  </div>
-);
+const UserDashboard = () => {
+  const location = useLocation();
+  const { assignedTasks, user } = location.state || {}; // Handle undefined state
+  const [tasks, setTasks] = useState(assignedTasks);
+  const [completionPercentage,setCompletionPercentage]=useState(0);
+  useEffect(()=>{
+    calcStats();
+}, [tasks]);
+const calcStats = async()=>{
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(task => task.status === "Completed").length;
+  setCompletionPercentage(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0);
+}
+  
+
+const taskCompletionData = [
+  { name: "Background", value: 100, fill: "#ddd" }, // Full gray background ring
+  { name: "Completed", value: completionPercentage, fill: "#4caf50" }, // Green progress ring
+];
+  // Toggle task status
+
+  const toggleStatus = async (taskId) => {
+    let prevTasks=[...tasks];
+    prevTasks.forEach(task =>{
+      if(task._id === taskId){
+        task.status = task.status === "Completed" ? "Pending" : "Completed";
+      }
+    });
+    await setTasks(prevTasks);
+    let updatedUser={...user, assignedTasks:prevTasks};
+    await updateUser(updatedUser);
+  };
+
+  const updateUser = async(updatedUser) => {
+    await axios.put(`http://localhost:8000/api/update/${user._id}`, updatedUser)
+    .then((response)=>{
+        toast.success(response.data.msg, {position: 'top-right'})
+    }).catch(error=>console.log(error))
+}
+
+  return (
+    <div className="container d-flex flex-row align-items-start justify-content-center vh-100 mt-5">
+      {/* Circular Progress Chart */}
+      <div className="mt-4 me-5" style={{ width: "250px", height: "250px", position: "relative" }}>
+          <ResponsiveContainer width="100%" height="100%">
+           <RadialBarChart
+            innerRadius="80%"
+            outerRadius="100%"
+            barSize={15}
+            data={taskCompletionData}
+            startAngle={90}
+            endAngle={-270}
+          >
+            <RadialBar dataKey="value" fill="#4caf50" clockWise />
+          </RadialBarChart>
+        </ResponsiveContainer>
+        <div
+          className="position-absolute top-50 start-50 translate-middle"
+          style={{ fontSize: "20px", fontWeight: "bold", color: "#4caf50" }}
+        >
+          {taskCompletionData[1].value.toFixed(2)}%
+        </div>
+      </div>
+
+      {/* Task Table */}
+      <div className="table-responsive">
+        <table className="table table-bordered">
+          <thead className="table-dark">
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Due Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map(task => (
+              <tr key={task._id}>
+                <td>{task.task.title}</td>
+                <td>{task.task.description}</td>
+                <td>{new Date(task.dueDate).toLocaleDateString()}</td>
+                <td>
+                  <button className={`btn btn-${task.status === "Completed" ? "success" : "warning"}`} onClick={() => toggleStatus(task._id)}>
+                    {task.status}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    )
+};
 
 const AdminDashboard = () => {
   const [newHires, setNewHires] = useState([]);

@@ -50,7 +50,11 @@ export const create = async (req, res) => {
   // Get all new hires along with their assigned tasks
   export const getAll = async (req, res) => {
     try {
-      const hires = await NewHire.find({role:"user"}).populate('assignedTasks');
+      const hires = await NewHire.find({role:"user"}).populate({
+        path: "assignedTasks.task",
+        select: "title description", // Fetch only title & description
+      })
+      .exec();
       res.status(200).json(hires);
     } catch (error) {
       res.status(500).json({ error: 'Error fetching new hires' });

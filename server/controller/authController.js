@@ -4,7 +4,11 @@ import NewHire from "../models/newHireModel.js";
 export const login = async (req, res) => {
     try {
       const { username, password } = req.body;
-      const user = await NewHire.findOne({email:username, password: password }); // Fetch all tasks from master data
+      const user = await NewHire.findOne({email:username, password: password }).populate({
+        path: "assignedTasks.task",
+        select: "title description", // Fetch only title & description
+      })
+      .exec(); // Fetch all tasks from master data
       if (user===null || user===undefined) {
         return res.status(401).json({ error: 'Failed to login' });
       }
