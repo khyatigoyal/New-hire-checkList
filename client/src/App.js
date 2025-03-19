@@ -12,7 +12,7 @@ import { FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 
 const Navbar = () => (
   <nav className="navbar navbar-dark bg-primary p-3 d-flex justify-content-between">
-    <h1 className="text-white">New Hire Onboarding Trails</h1>
+    <h1 className="text-white">Chitragupta</h1>
     {sessionStorage.getItem("user")!==null && sessionStorage.getItem("user")!==undefined && <button className="btn btn-light" onClick={() => {sessionStorage.clear();window.location.href = "/"}}>Logout</button>}
   </nav>
 );
